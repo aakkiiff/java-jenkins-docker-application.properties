@@ -4,25 +4,30 @@ pipeline {
         stage('pull github sc') {
              
             steps {
-                git url: 'https://github.com/aakkiiff/java_docker_jenkins_task001'
+                git url: 'https://github.com/aakkiiff/java-jenkins-docker-application.properties'
             }
         }
         stage('docker build push') { 
             steps {
               
-                sh 'mvn clean package'
-
-
-                withCredentials([usernamePassword(credentialsId: 'test', passwordVariable: 'pwd', usernameVariable: 'uname')]) {
-                    sh "docker login -u ${env.uname} -p ${env.pwd}"
-                    sh 'docker build --no-cache -t akifboi/properties_task:1 .'
+                bat "mvn clean package"
+                configFileProvider([configFile(fileId: 'mysql', targetLocation: 'C:\\Users\\moham\\.jenkins\\workspace\\task_java_docker_jenkins\\target', variable: 'jar location')]) {
+                    // some block
+                }
+                withCredentials([usernamePassword(credentialsId: 'docker_hub', passwordVariable: 'dckr_pswd', usernameVariable: 'dckr_uname')]) {
+                    // some block
+                    bat "docker login -u ${env.dckr_uname} -p ${env.dckr_pswd}"
+                    bat 'docker build --no-cache -t akifboi/properties_task:windows .'
                     echo "building images done"
 
                     echo "push images to dockerhub"
-                    sh 'docker push akifboi/properties_task:1'
+                    bat 'docker push akifboi/properties_task:windows'
+}
+            
+                bat 'docker logout'
                 }
 
-                sh 'docker logout'
+                
             }
         }
         
@@ -30,4 +35,3 @@ pipeline {
        
     }
     
-}
