@@ -1,0 +1,8 @@
+version: '3'
+services:
+  test:
+    image: akifboi/properties_task:windows
+    
+    
+    ports:
+      - 3000:3000
